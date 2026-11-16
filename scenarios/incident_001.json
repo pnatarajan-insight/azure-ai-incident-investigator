@@ -1,0 +1,15 @@
+{
+  "number": "INC0001001",
+  "short_description": "AKS hosted payment API returning HTTP 500",
+  "priority": "2",
+  "state": "In Progress",
+  "assignment_group": "Cloud Operations Lab",
+  "configuration_item": "aks-payment-api",
+  "description": "Users are intermittently receiving HTTP 500 responses.",
+  "environment": "Lab",
+  "azure_resource_type": "AKS",
+  "cpu_percent": 72,
+  "memory_percent": 96,
+  "pod_restarts": 14,
+  "http_500_count": 37
+}

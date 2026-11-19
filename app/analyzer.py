@@ -46,6 +46,53 @@ def analyze_pod_restarts(restarts):
         }
     else:
         return {
-            "severity": "CRITICAL",
+            "severity": "HIGH",
             "message": f"Pod restart count is high at {restarts}"
         }
+
+SEVERITY_RANK = {
+        "INFO": 1,
+        "WARNING": 2,
+        "HIGH": 3,
+        "CRITICAL": 4
+        }
+
+def determine_overall_risk(findings):
+    highest_severity = "INFO"
+
+    for finding in findings:
+        current_severity = finding["severity"]
+
+        if SEVERITY_RANK[current_severity] > SEVERITY_RANK[highest_severity]:
+            highest_severity = current_severity
+
+    return highest_severity
+
+
+def generate_recommendations(incident):
+    recommendations = []
+
+    if incident["memory_percent"] > 90:
+        recommendations.append(
+            "Investigate container memory consumption."
+        )
+        recommendations.append(
+            "Review Kubernetes memory requests and limits."
+        )
+
+    if incident["pod_restarts"] > 5:
+        recommendations.append(
+            "Inspect Kubernetes events to determine the reason for pod restarts."
+        )
+
+    if incident["cpu_percent"] > 90:
+        recommendations.append(
+            "Investigate processes responsible for high CPU utilization."
+        )
+
+    if not recommendations:
+        recommendations.append(
+            "No critical telemetry conditions were detected by the current rules."
+        )
+
+    return recommendations

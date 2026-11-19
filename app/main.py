@@ -1,6 +1,6 @@
 import json
 
-from analyzer import ( analyze_cpu, analyze_memory, analyze_pod_restarts)
+from analyzer import ( analyze_cpu, analyze_memory, analyze_pod_restarts, determine_overall_risk, generate_recommendations)
 
 with open("scenarios/incident_001.json", "r") as file:
     incident = json.load(file)
@@ -64,3 +64,19 @@ for finding in findings:
         f"[{finding['severity']}]"
         f"[{finding['message']}]"
     )
+
+overall_risk = determine_overall_risk(findings)
+
+print()
+
+print(f"Overall Incident Risk: {overall_risk}")
+
+recommendations = generate_recommendations(incident)
+
+print()
+
+print("Recommended Investigation")
+print("=========================")
+
+for index, recommendation in enumerate(recommendations, start=1):
+    print(f"{index}. {recommendation}")

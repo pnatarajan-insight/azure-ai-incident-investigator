@@ -1,6 +1,6 @@
 import json
 
-from analyzer import ( analyze_cpu, analyze_memory, analyze_pod_restarts, determine_overall_risk, generate_recommendations)
+from analyzer import ( analyze_cpu, analyze_memory, analyze_pod_restarts, determine_overall_risk, generate_recommendations, get_ticket_priority, correlate_evidence, build_evidence)
 
 with open("scenarios/incident_001.json", "r") as file:
     incident = json.load(file)
@@ -20,7 +20,7 @@ print(f"CPU            : {incident['cpu_percent']}%")
 print(f"Memory         : {incident['memory_percent']}%")
 print(f"Pod Restarts   : {incident['pod_restarts']}")
 print(f"HTTP 500 Count : {incident['http_500_count']}")
-
+print(f"Recent Deployment : {incident['recent_deployment']}")
 
 print()
 
@@ -80,3 +80,34 @@ print("=========================")
 
 for index, recommendation in enumerate(recommendations, start=1):
     print(f"{index}. {recommendation}")
+
+ticket_priority = get_ticket_priority(incident["priority"])
+
+print()
+
+print(f"ServiceNow priority : P{incident['priority']} ({ticket_priority})")
+
+correlations = correlate_evidence(incident)
+
+print()
+
+print("Evidence Correlation")
+print("====================")
+for index, correlation in enumerate(correlations, start=1):
+    print(f"{index}. {correlation}")
+
+evidence = build_evidence(incident)
+
+print()
+
+print("Collected Evidence")
+print("==================")
+
+for item in evidence:
+    print(
+            f"- {item['type']}: "
+            f"{item['value']}{item['unit']} "
+            f"[{item['source']}]"
+        )
+
+print(f"\nEvidence Items Collected: {len(evidence)}")

@@ -96,3 +96,100 @@ def generate_recommendations(incident):
         )
 
     return recommendations
+
+def get_ticket_priority(priority):
+    priority_mapping = {
+            "1": "CRITICAL",
+            "2": "HIGH",
+            "3": "MODERATE",
+            "4": "LOW"
+        }
+
+    return priority_mapping.get(priority, "UNKNOWN")
+
+def correlate_evidence(incident):
+    correlations = []
+
+    if (
+        incident["memory_percent"] > 90
+        and incident["pod_restarts"] > 5
+    ):
+        correlations.append(
+            "High memory utilization is occurring together with repeated pod restarts."
+        )
+
+    if (
+        incident["pod_restarts"] > 5
+        and incident["http_500_count"] > 10
+    ):
+        correlations.append(
+            "Repeated pod restarts correlate with elevated HTTP 500 errors."
+        )
+
+    if (
+        incident["recent_deployment"]
+        and incident["http_500_count"] > 10
+    ):
+        correlations.append(
+            "Application errors are present following a recent deployment."
+        )
+
+    if (
+        incident["termination_reason"] == "OOMKilled"
+        and incident["memory_percent"] > 90
+    ):
+        correlations.append(
+                "Container termination with OOMKilled is consistent with observed high memory utilization."
+        )
+
+    return correlations
+
+def build_evidence(incident):
+    evidence = []
+
+    if incident["memory_percent"] > 90:
+        evidence.append({
+            "source": "Telemetry",
+            "type": "Memory",
+            "value": incident["memory_percent"],
+            "unit": "%",
+            "status": "Abnormal"
+        })
+
+    if incident["pod_restarts"] > 5:
+        evidence.append({
+            "source": "Kubernetes",
+            "type": "Pod Restarts",
+            "value": incident["pod_restarts"],
+            "unit": "count",
+            "status": "Abnormal"
+        })
+
+    if incident["http_500_count"] > 10:
+        evidence.append({
+            "source": "Application",
+            "type": "HTTP 500",
+            "value": incident["http_500_count"],
+            "unit": "count",
+            "status": "Abnormal"
+        })
+
+    if incident["recent_deployment"]:
+        evidence.append({
+            "source": "Deployment",
+            "type": "Recent Deployment",
+            "value": True,
+            "unit": "",
+            "status": "Context"
+        })
+
+    if incident["termination_reason"]:
+        evidence.append({
+            "source": "Kubernetes",
+            "type": "Termination Reason",
+            "value": incident["termination_reason"],
+            "unit": "",
+            "status": "Abnormal"
+        })
+
+    return evidence

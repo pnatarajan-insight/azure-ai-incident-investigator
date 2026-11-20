@@ -11,5 +11,7 @@
   "cpu_percent": 72,
   "memory_percent": 96,
   "pod_restarts": 14,
-  "http_500_count": 37
+  "http_500_count": 37,
+  "recent_deployment": "TRUE",
+  "termination_reason": "OOMKilled"
 }

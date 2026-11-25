@@ -1,6 +1,7 @@
 import json
 
-from analyzer import ( analyze_cpu, analyze_memory, analyze_pod_restarts, determine_overall_risk, generate_recommendations, get_ticket_priority, correlate_evidence, build_evidence)
+from app.ai_investigator import investigate_incident
+from app.analyzer import ( analyze_cpu, analyze_memory, analyze_pod_restarts, determine_overall_risk, generate_recommendations, get_ticket_priority, correlate_evidence, build_evidence)
 
 with open("scenarios/incident_001.json", "r") as file:
     incident = json.load(file)
@@ -24,34 +25,6 @@ print(f"Recent Deployment : {incident['recent_deployment']}")
 
 print()
 
-###
-#cpu_result = analyze_cpu(incident["cpu_percent"])
-#print()
-#print("Incident Analysis on CPU")
-#print("========================")
-
-#print(
-#    f"[{cpu_result['severity']}] "
-#    )
-
-#memory_result = analyze_memory(incident["memory_percent"])
-#print()
-#print("Incidnet Analysis on Memory")
-#print("===========================")
-
-#print(
-#    f"[{memory_result['severity']}]"
-#      )
-
-#pod_restart_result = analyze_pod_restarts(incident["pod_restarts"])
-#print()
-#print("Incident Analysis on Pod Restart")
-#print("================================")
-
-#print(
-#    f"[{pod_restart_result['severity']}]"
-#    )
-###
 
 findings = [
         analyze_cpu(incident["cpu_percent"]),
@@ -111,3 +84,17 @@ for item in evidence:
         )
 
 print(f"\nEvidence Items Collected: {len(evidence)}")
+
+print()
+
+print("AI Incident Investigation")
+
+print("=========================")
+
+print("Sending incident evidence to Azure OpenAI...")
+
+print()
+
+ai_result = investigate_incident(incident)
+
+print(ai_result)

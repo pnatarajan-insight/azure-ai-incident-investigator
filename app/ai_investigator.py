@@ -1,5 +1,7 @@
 import json
 
+from app.llm_client import send_to_llm
+
 
 def build_investigation_context(incident):
 
@@ -31,3 +33,10 @@ def build_ai_prompt(incident):
     )
 
     return final_prompt
+
+def investigate_incident(incident):
+    prompt = build_ai_prompt(incident)
+
+    response = send_to_llm(prompt)
+
+    return response

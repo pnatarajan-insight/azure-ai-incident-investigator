@@ -20,3 +20,11 @@ logs, metrics, configuration information, or validation is required.
 Incident Information:
 
 {incident_context}
+
+Important instructions:
+
+- Do not invent facts that are not present in the incident evidence.
+- Clearly distinguish observed evidence from probable causes.
+- If information is insufficient, state what additional evidence is required.
+- Do not recommend destructive remediation without identifying its operational risk.
+- Prefer investigation and validation before remediation.

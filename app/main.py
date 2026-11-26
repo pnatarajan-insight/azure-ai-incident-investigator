@@ -83,6 +83,16 @@ for item in evidence:
             f"[{item['source']}]"
         )
 
+analysis = {
+        "findings": findings,
+        "overall_risk": overall_risk,
+        "recommendations": recommendation,
+        "correlations": correlation,
+        "evidence": evidence
+    }
+
+
+
 print(f"\nEvidence Items Collected: {len(evidence)}")
 
 print()
@@ -95,6 +105,10 @@ print("Sending incident evidence to Azure OpenAI...")
 
 print()
 
-ai_result = investigate_incident(incident)
+ai_result = investigate_incident(
+        incident,
+        analysis
+        )
 
 print(ai_result)
+

@@ -1,4 +1,4 @@
-from app.monitor_client import get_vm_cpu_metrics
+from app.monitor_client import (get_vm_cpu_metrics, summarize_cpu_metrics)
 
 
 resource_id = (
@@ -28,3 +28,13 @@ else:
         f"{metric['timestamp']} "
         f"CPU: {metric['average_cpu']:.2f}%"
     )
+
+summary = summarize_cpu_metrics(cpu_metrics)
+
+print()
+print("CPU Summary")
+print("===========")
+
+print(f"Samples: {summary['sample_count']}")
+print(f"Average CPU: {summary['average_cpu']}")
+print(f"Maximum CPU: {summary['maximum_cpu']}")

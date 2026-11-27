@@ -38,3 +38,23 @@ def get_vm_cpu_metrics(resource_id, region):
                         })
 
     return cpu_values
+
+def summarize_cpu_metrics(cpu_metrics):
+
+    if not cpu_metrics:
+        return {
+            "sample_count": 0,
+            "average_cpu": None,
+            "maximum_cpu": None
+        }
+
+    values = [
+        item["average_cpu"]
+        for item in cpu_metrics
+    ]
+
+    return {
+        "sample_count": len(values),
+        "average_cpu": sum(values) / len(values),
+        "maximum_cpu": max(values)
+    }

@@ -2,6 +2,7 @@ import json
 
 from app.ai_investigator import investigate_incident
 from app.analyzer import ( analyze_cpu, analyze_memory, analyze_pod_restarts, determine_overall_risk, generate_recommendations, get_ticket_priority, correlate_evidence, build_evidence)
+from app.monitor_client import (get_vm_cpu_metrics, summarize_cpu_metrics)
 
 with open("scenarios/incident_001.json", "r") as file:
     incident = json.load(file)
@@ -71,6 +72,16 @@ for index, correlation in enumerate(correlations, start=1):
 
 evidence = build_evidence(incident)
 
+resource_id = "/subscriptions/df05ac71-5d40-4c99-9789-aa269970a25f/resourceGroups/peru-main-rg/providers/Microsoft.Compute/virtualMachines/ubuntu-testvm01"
+region = "eastus"
+
+cpu_metrics = get_vm_cpu_metrics(
+    resource_id,
+    region
+)
+
+cpu_summary = summarize_cpu_metrics(cpu_metrics)
+
 print()
 
 print("Collected Evidence")
@@ -88,7 +99,10 @@ analysis = {
         "overall_risk": overall_risk,
         "recommendations": recommendation,
         "correlations": correlation,
-        "evidence": evidence
+        "evidence": evidence,
+        "azure_monitor": {
+            "cpu": cpu_summary
+            }
     }
 
 

@@ -3,6 +3,7 @@ import json
 from app.ai_investigator import investigate_incident
 from app.analyzer import ( analyze_cpu, analyze_memory, analyze_pod_restarts, determine_overall_risk, generate_recommendations, get_ticket_priority, correlate_evidence, build_evidence)
 from app.monitor_client import (get_vm_cpu_metrics, summarize_cpu_metrics)
+from app.resource_client import find_vm_by_name
 
 with open("scenarios/incident_001.json", "r") as file:
     incident = json.load(file)
@@ -72,8 +73,34 @@ for index, correlation in enumerate(correlations, start=1):
 
 evidence = build_evidence(incident)
 
-resource_id = "/subscriptions/df05ac71-5d40-4c99-9789-aa269970a25f/resourceGroups/peru-main-rg/providers/Microsoft.Compute/virtualMachines/ubuntu-testvm01"
-region = "eastus"
+#resource_id = "/subscriptions/df05ac71-5d40-4c99-9789-aa269970a25f/resourceGroups/peru-main-rg/providers/Microsoft.Compute/virtualMachines/ubuntu-testvm01"
+#region = "eastus"
+
+vm_name = "ubuntu-testvm01"
+
+subscription_ids = [
+    "df05ac71-5d40-4c99-9789-aa269970a25f"
+]
+
+matches = find_vm_by_name(
+    vm_name,
+    subscription_ids
+)
+
+if len(matches) == 0:
+    raise ValueError(
+        f"No Azure VM found with name: {vm_name}"
+    )
+
+if len(matches) > 1:
+    raise ValueError(
+        f"Multiple Azure VMs found with name: {vm_name}"
+    )
+
+resource_details = matches[0]
+
+resource_id = resource_details["resource_id"]
+region = resource_details["region"]
 
 cpu_metrics = get_vm_cpu_metrics(
     resource_id,
